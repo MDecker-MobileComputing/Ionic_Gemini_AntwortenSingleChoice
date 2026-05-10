@@ -55,9 +55,9 @@ export class HomePage {
             await this.geminiService.erzeugeAntworten( frageTrimmed );
 
       this.antwortoption1 = antworten.richtigeAntwort;
-      this.antwortoption2 = antworten.falscheAntwortOptionen[0] || "";
-      this.antwortoption3 = antworten.falscheAntwortOptionen[1] || "";
-      this.antwortoption4 = antworten.falscheAntwortOptionen[2] || "";
+      this.antwortoption2 = antworten.falscheAntworten[0] || "";
+      this.antwortoption3 = antworten.falscheAntworten[1] || "";
+      this.antwortoption4 = antworten.falscheAntworten[2] || "";
 
     } catch ( fehler ) {
 

@@ -45,10 +45,6 @@ export class GeminiService {
    */
   public async erzeugeAntworten( singleChoiceFrage: string ): Promise<Antworten> {
 
-    // make http call to localhost:8080 
-    // singleChoiceFrage in body of request
-    // and return the response as Antworten object
-
     const requestObjekt = { 
                             frage    : singleChoiceFrage,
                             sitzungId: GeminiService.SITZUNG_ID

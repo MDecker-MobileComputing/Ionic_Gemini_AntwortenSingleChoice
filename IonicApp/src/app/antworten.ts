@@ -6,12 +6,12 @@ export class Antworten {
 
   public richtigeAntwort: string;
 
-  public falscheAntwortOptionen: string[];
+  public falscheAntworten: string[];
 
 
-  constructor( richtigeAntwort: string = '', falscheAntwortOptionen: string[] = [] ) {
+  constructor( richtigeAntwort: string = '', falscheAntworten: string[] = [] ) {
 
-    this.richtigeAntwort        = richtigeAntwort;
-    this.falscheAntwortOptionen = falscheAntwortOptionen;
+    this.richtigeAntwort  = richtigeAntwort;
+    this.falscheAntworten = falscheAntworten;
   }
 }
