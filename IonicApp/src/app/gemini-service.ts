@@ -1,4 +1,8 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
+
 import { Antworten } from './antworten';
 
 
@@ -10,7 +14,21 @@ import { Antworten } from './antworten';
 })
 export class GeminiService {
 
-  
+  /** 
+   * UUID für Sitzung, wird in jedem Request für Rate Limits mitgeschickt. 
+   * Für eine richtige Implementierung müsste die UUID mindestens persistiert werden,
+   * eine saubere Lösung wäre es, wenn die Sitzungs-ID nach Authentifizierung 
+   * vom Server generiert und zurückgegeben wird, damit sie nicht von einem Angreifer
+   * gefälscht werden kann.
+   */
+  static readonly SITZUNG_ID = uuidv4();
+
+
+  /**
+   * Konstruktor für *Dependency Injection* 
+   */
+  constructor( private httpClient: HttpClient ) {}
+
 
   /**
    * Antwortoptionen für Single-Choice-Fragen von KI erzeugen lassen.
@@ -20,16 +38,29 @@ export class GeminiService {
    * Rate Limits zu implementieren, damit die KI-API nicht übermäßig oft aufgerufen wird, was zu hohen 
    * Kosten führen könnte.
    * 
-   * @param frage Vom Nutzer eingegebene Single-Choice-Frage
+   * @param singleChoiceFrage Vom Nutzer eingegebene Single-Choice-Frage
    * 
-   * @returns Antwortenobjekt mit einer richtigen Antwort und 
-   *          mehreren falschen Antwortoptionen.
+   * @returns Antwortenobjekt mit einer richtigen Antwort und mehreren
+   *           falschen Antwortoptionen.
    */
-  public async erzeugeAntworten( frage: string ): Promise<Antworten> {
+  public async erzeugeAntworten( singleChoiceFrage: string ): Promise<Antworten> {
 
-    return Promise.resolve( 
-      new Antworten( "Richtige Antwort", 
-        [ "Falsche Antwort 1", "Falsche Antwort 2", "Falsche Antwort 3" ] ) 
-      );
+    // make http call to localhost:8080 
+    // singleChoiceFrage in body of request
+    // and return the response as Antworten object
+
+    const requestObjekt = { 
+                            frage    : singleChoiceFrage,
+                            sitzungId: GeminiService.SITZUNG_ID
+                          };
+
+    const requestObserver = 
+              this.httpClient.post<Antworten>( 
+                    "http://localhost:8080/erzeugeAntworten", 
+                    requestObjekt );
+
+    const antworten = await firstValueFrom( requestObserver );
+
+    return antworten;
   }
 }

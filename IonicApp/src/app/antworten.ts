@@ -8,9 +8,10 @@ export class Antworten {
 
   public falscheAntwortOptionen: string[];
 
+
   constructor( richtigeAntwort: string = '', falscheAntwortOptionen: string[] = [] ) {
 
-    this.richtigeAntwort = richtigeAntwort;
+    this.richtigeAntwort        = richtigeAntwort;
     this.falscheAntwortOptionen = falscheAntwortOptionen;
   }
 }
