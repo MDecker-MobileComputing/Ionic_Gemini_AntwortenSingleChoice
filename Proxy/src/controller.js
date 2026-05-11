@@ -1,22 +1,25 @@
 import createLogger from "logging";
 import { GoogleGenAI } from "@google/genai";
 
+import { erzeugeAntwortenoptionenMitGemini } from "./gemini-service.js";
+
+
 const logger = createLogger( "controller" );
 
-/** 
+/**
  * API-Objekt für den Zugriff auf die Gemini AI erzeugen;
- * es wurde zuvor schon sichergestellt, dass die Umgebungsvariable  
+ * es wurde zuvor schon sichergestellt, dass die Umgebungsvariable
  * `GEMINI_API_KEY` gesetzt ist.
  */
 const geminiAI = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
 
 
 /**
- * Event-Handler für die Route "/erzeugeAntworten". 
- * 
+ * Event-Handler für die Route "/erzeugeAntworten".
+ *
  * @param {*} req Muss im Body eine "frage" (string) und eine "sitzungID" (string) enthalten.
- * 
- * @param {*} res Antwort-Objekt, das die richtige Antwort und drei falsche Antworten zurückgibt. 
+ *
+ * @param {*} res Antwort-Objekt, das die richtige Antwort und drei falsche Antworten zurückgibt.
  */
 export async function erzeugeAntwortenController( req, res ) {
 
@@ -38,71 +41,32 @@ export async function erzeugeAntwortenController( req, res ) {
       });
     }
 
-    logger.info( `Frage von Sitzung ${sitzungID} erhalten: ${frageTrimmed}` );
+    logger.info(
+      `Frage von Client-Sitzung ${sitzungID} erhalten: ${frageTrimmed}`
+    );
 
-    const prompt = `
-          Gib genau 4 Antwortoptionen zur folgenden Frage zurück.
 
-          WICHTIGES AUSGABEFORMAT:
-          - Antworte ausschließlich als gültiges JSON.
-          - Kein Markdown, keine Backticks, keine Einleitung, kein Fließtext.
-          - Genau dieses Schema verwenden:
-          {
-            "richtigeAntwort": "string",
-            "falscheAntworten": ["string", "string", "string"]
-          }
-          - "falscheAntworten" muss genau 3 Einträge enthalten.
-          - Alle Antworten kurz und stichpunktartig (nur Text, keine Nummerierung).
 
-          Frage: ${frageTrimmed}`;
-        
-    const antwortGemini = 
-              await geminiAI.models.generateContent({
-                    model   : "gemini-3.1-flash-lite",
-                    contents: prompt
-              });
-
-    /*
-    logger.info( 
-      `Antwort von Gemini für Sitzung ${sitzungID} erhalten:`, 
-      antwortGemini );
-    */
-
-    const antwortText = ( antwortGemini?.text || "" ).trim();
-    const antwortJsonText = antwortText
-                              .replace( /^```json\s*/i, "" )
-                              .replace( /^```\s*/i, "" )
-                              .replace( /\s*```$/, "" )
-                              .trim();
-    let geminiObjekt = null;
     try {
 
-      geminiObjekt = JSON.parse( antwortJsonText );
+      const antwortenArray =
+          await erzeugeAntwortenoptionenMitGemini( frageTrimmed ); // erste Antwort im Array ist die richtige
+
+      const ergebnisObjekt = {
+                              richtigeAntwort : antwortenArray[0],
+                              falscheAntworten: antwortenArray.slice(1)
+                           };
+
+      res.json( ergebnisObjekt );
+
+      logger.info( `Gemini-Antwort für Sitzung ${sitzungID} erfolgreich generiert und zurückgegeben.` );
 
     } catch ( fehler ) {
 
-      logger.error( "Gemini-Antwort konnte nicht als JSON geparst werden.", fehler );
-      return res.status( 502 ).json( {
-        error: "Bad Gateway: Ungültige Antwort von Gemini erhalten."
-      } );
+      logger.error( `Gemini-Fehler für Sitzung ${sitzungID}:`, fehler );
+
+      return res.status( 500 ).json( {
+        error: "Interner Serverfehler bei der Antwortgenerierung."
+      });
     }
-
-    const richtigeAntwort = ( geminiObjekt?.richtigeAntwort || "" ).trim();
-    const falscheAntworten = Array.isArray( geminiObjekt?.falscheAntworten )
-                               ? geminiObjekt.falscheAntworten
-                               : [];
-
-    if ( richtigeAntwort.length === 0 || falscheAntworten.length !== 3 ) {
-
-      return res.status( 502 ).json( {
-        error: "Bad Gateway: Antwortformat von Gemini ist ungültig."
-      } );
-    }
-
-    const ergebnisObjekt = {
-                              richtigeAntwort,
-                              falscheAntworten
-                           };
-
-    res.json( ergebnisObjekt );
 }

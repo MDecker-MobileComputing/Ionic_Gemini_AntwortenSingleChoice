@@ -1,7 +1,10 @@
 import express      from "express";
 import createLogger from "logging";
-import { erzeugeAntwortenController } from "./controller.js";
+
 import { corsMiddleware } from "./middleware.js";
+import { erzeugeAntwortenController } from "./controller.js";
+import { initialisiereGeminiApi } from "./gemini-service.js";
+
 
 const logger = createLogger( "gemini-proxy" );
 
@@ -13,7 +16,8 @@ if ( !API_KEY ) {
 }
 
 const GEMINI_MODELL = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
-logger.info( "KI-Modell:", GEMINI_MODELL );
+
+initialisiereGeminiApi( API_KEY, GEMINI_MODELL );
 
 const PORTNUMMER = process.env.PORT || 8080;
 
