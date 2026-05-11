@@ -19,10 +19,10 @@
 
     <ion-row>
       <ion-col size="12" size-md="6">
-        <ion-button expand="block" (click)="onErzeugenButton()">Erzeugen</ion-button>
+        <ion-button expand="block" [disabled]="requestLaeuft" (click)="onErzeugenButton()">Erzeugen</ion-button>
       </ion-col>
       <ion-col size="12" size-md="6">
-        <ion-button expand="block" color="medium" (click)="onLoeschenButton()">Löschen</ion-button>
+        <ion-button expand="block" color="medium" [disabled]="requestLaeuft" (click)="onLoeschenButton()">Löschen</ion-button>
       </ion-col>
     </ion-row>
 

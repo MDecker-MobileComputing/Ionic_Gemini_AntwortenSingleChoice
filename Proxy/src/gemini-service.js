@@ -55,17 +55,19 @@ export async function erzeugeAntwortenoptionenMitGemini( frage ) {
 
           Frage: ${frageTrimmed}`;
 
+    const geminiAnfrageObjekt = {
+      model   : geminiModell,
+      contents: prompt
+    };
+
     const antwortGemini =
-              await geminiApiObjekt.models.generateContent({
-                                                                model   : geminiModell,
-                                                                contents: prompt
-                                                           });
+              await geminiApiObjekt.models.generateContent( geminiAnfrageObjekt );
 
     //console.dir( { antwortGemini }, { depth: null } );
 
     const antwortTextRoh = antwortGemini.text;
 
-        // JSON-String aus Gemini-Antwort extrahieren (falls Gemini zusätzlichen Text zurückliefert)
+    // JSON-String aus Gemini-Antwort extrahieren (falls Gemini zusätzlichen Text zurückliefert)
     const jsonStringMatch = antwortTextRoh.match( /{[\s\S]*}/ );
     const jsonString = jsonStringMatch ? jsonStringMatch[0] : null;
 
@@ -82,20 +84,4 @@ export async function erzeugeAntwortenoptionenMitGemini( frage ) {
                                                   .map( (antwort) => antwort.trim() );
 
     return [ antwortObjekt.richtigeAntwort, ...antwortObjekt.falscheAntwortenArray ];
-}
-
-
-/**
- * Hilfsfunktion, um die von Gemini gelieferte JSON-Antwort in einer Datei zu speichern.
- *
- * @param {*} jsonAntwortString JSON-String von Gemini, der in Datei gespeichert werden soll
- */
-async function loggeJsonAntwort( jsonAntwortString ) {
-
-    const dateiName = `antwort-${Date.now()}.json`;
-    const inhalt = typeof jsonAntwortString === "string"
-                 ? jsonAntwortString
-                 : JSON.stringify( jsonAntwortString, null, 2 );
-
-    await writeFile( dateiName, inhalt, "utf8" );
 }

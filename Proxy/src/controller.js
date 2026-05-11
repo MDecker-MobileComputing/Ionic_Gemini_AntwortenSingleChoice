@@ -42,16 +42,16 @@ export async function erzeugeAntwortenController( req, res ) {
     }
 
     logger.info(
-      `Frage von Client-Sitzung ${sitzungID} erhalten: ${frageTrimmed}`
+      `Frage von Client-Sitzung ${sitzungID} erhalten: "${frageTrimmed}"`
     );
-
 
 
     try {
 
       const antwortenArray =
-          await erzeugeAntwortenoptionenMitGemini( frageTrimmed ); // erste Antwort im Array ist die richtige
+          await erzeugeAntwortenoptionenMitGemini( frageTrimmed );
 
+      // erste Antwort im Array ist die richtige, alle anderen sind falsch
       const ergebnisObjekt = {
                               richtigeAntwort : antwortenArray[0],
                               falscheAntworten: antwortenArray.slice(1)
@@ -59,7 +59,7 @@ export async function erzeugeAntwortenController( req, res ) {
 
       res.json( ergebnisObjekt );
 
-      logger.info( `Gemini-Antwort für Sitzung ${sitzungID} erfolgreich generiert und zurückgegeben.` );
+      logger.info( `Gemini-Antwort für Sitzung ${sitzungID} verarbeitet.` );
 
     } catch ( fehler ) {
 

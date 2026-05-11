@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { v4 as uuidv4 } from 'uuid';
 import { Capacitor } from '@capacitor/core';
 
 import { Antworten } from './antworten';
@@ -22,13 +21,15 @@ import { Antworten } from './antworten';
 export class GeminiService {
 
   /**
-   * UUID für Sitzung, wird in jedem Request für Rate Limits mitgeschickt.
-   * Für eine richtige Implementierung müsste die UUID mindestens persistiert werden,
-   * eine saubere Lösung wäre es, wenn die Sitzungs-ID nach Authentifizierung
-   * vom Server generiert und zurückgegeben wird, damit sie nicht von einem Angreifer
-   * gefälscht werden kann.
-   */
-  static readonly SITZUNG_ID = uuidv4();
+    * Kurze Sitzungs-ID mit genau 10 Hex-Zeichen für Rate-Limits.
+    * Sie wird bei jedem Start der App neu generiert, sollte besser persistiert
+    * oder von einem API-Gateway nach Authentifizierung zugewiesen werden.
+    *
+    * Hinweis: Diese ID ist nicht kryptografisch sicher und nicht global eindeutig.
+    */
+  static readonly SITZUNG_ID = Math.floor( Math.random() * 0x10000000000 )
+                                   .toString( 16 )
+                                   .padStart( 10, '0' );
 
   /**
    * URL für Zugriff auf den Proxy-Server`; Hostname abhängig von Betrieb der
@@ -45,14 +46,17 @@ export class GeminiService {
 
       const appLaeuftAufAndroid = Capacitor.getPlatform() === "android";
 
-      let hostname = "localhost";
+      let hostname = "localhost"; // Hostname für Ausführung mit "ionic serve"
       if ( appLaeuftAufAndroid ) {
 
-        hostname = "10.0.2.2"; // Android-Emulator verwendet diese IP-Adresse, um auf localhost des Host-Computers zuzugreifen
+        hostname = "10.0.2.2";
+        // Android-Emulator verwendet diese IP-Adresse, um auf localhost des Host-Computers zuzugreifen
       }
 
       this.proxyUrl = `http://${hostname}:8080/erzeugeAntworten`;
       console.log( `URL für Proxy-Server: ${this.proxyUrl}` );
+
+      console.log( `Sitzungs-ID: ${GeminiService.SITZUNG_ID}` );
   }
 
 

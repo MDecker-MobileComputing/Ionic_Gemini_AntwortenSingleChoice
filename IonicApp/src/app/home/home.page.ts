@@ -16,10 +16,10 @@ export class HomePage {
   /** Single-Choice-Frage, die der Nutzer eingegeben hat, weil er dafür Antwort-Optionen haben möchte. */
   public frage: string = "";
 
-  /** Erste Antwortoption (richtige Antwort) */  
+  /** Erste Antwortoption (richtige Antwort) */
   public antwortoption1: string = "";
 
-  /** Zweite Antwortoption (falsche Antwort) */  
+  /** Zweite Antwortoption (falsche Antwort) */
   public antwortoption2: string = "";
 
   /** Dritte Antwortoption (falsche Antwort) */
@@ -28,30 +28,38 @@ export class HomePage {
   /** Vierte Antwortoption (falsche Antwort) */
   public antwortoption4: string = "";
 
+  /** Solange true, läuft ein Gemini-Request und Buttons sind gesperrt. */
+  public requestLaeuft: boolean = false;
+
 
   /**
    * Konstruktor für *Dependency Injection*
    */
   constructor( private alertController: AlertController,
                private geminiService: GeminiService ) {}
-   
+
 
   /**
    * Event-Handler für den "Erzeugen"-Button.
    */
   public async onErzeugenButton() {
-   
+
+    if ( this.requestLaeuft ) { return; }
+
+    this.requestLaeuft = true;
+
     const frageTrimmed = this.frage.trim();
 
     if ( frageTrimmed.length === 0 ) {
 
       await this.zeigeFehlermeldung( "Bitte geben Sie eine Single-Choice-Frage ein." );
+      this.requestLaeuft = false;
       return;
     }
 
     try {
 
-      const antworten = 
+      const antworten =
             await this.geminiService.erzeugeAntworten( frageTrimmed );
 
       this.antwortoption1 = antworten.richtigeAntwort;
@@ -62,9 +70,13 @@ export class HomePage {
     } catch ( fehler ) {
 
       const fehlermeldung = extrahiereFehlermeldung( fehler );
-      console.error("Fehler beim Erzeugen der Antwortoptionen:", fehlermeldung );
+      console.error( "Fehler beim Erzeugen der Antwortoptionen:", fehlermeldung );
       await this.zeigeFehlermeldung( fehlermeldung );
-    } 
+
+    } finally {
+
+      this.requestLaeuft = false;
+    }
   }
 
 
@@ -73,7 +85,7 @@ export class HomePage {
    * anzeigt.
    */
   public async onLoeschenButton() {
-    
+
     const alert = await this.alertController.create({
       header: "Löschen bestätigen",
       message: "Frage und alle Antworten werden gelöscht. Möchten Sie fortfahren?",
