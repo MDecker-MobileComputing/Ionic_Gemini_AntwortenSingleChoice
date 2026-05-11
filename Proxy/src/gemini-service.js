@@ -63,7 +63,7 @@ export async function erzeugeAntwortenoptionenMitGemini( frage ) {
     const antwortGemini =
               await geminiApiObjekt.models.generateContent( geminiAnfrageObjekt );
 
-    //console.dir( { antwortGemini }, { depth: null } );
+    //console.dir( { antwortGemini }, { depth: null } ); // formartierte Ausgabe des gesamten Gemini-Antwortobjekts
 
     const antwortTextRoh = antwortGemini.text;
 
@@ -81,7 +81,7 @@ export async function erzeugeAntwortenoptionenMitGemini( frage ) {
 
     antwortObjekt.richtigeAntwort       = antwortObjekt.richtigeAntwort.trim();
     antwortObjekt.falscheAntwortenArray = antwortObjekt.falscheAntworten
-                                                  .map( (antwort) => antwort.trim() );
+                                                       .map( (antwort) => antwort.trim() );
 
     return [ antwortObjekt.richtigeAntwort, ...antwortObjekt.falscheAntwortenArray ];
 }

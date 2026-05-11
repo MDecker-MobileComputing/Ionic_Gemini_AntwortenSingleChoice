@@ -42,7 +42,7 @@ export async function erzeugeAntwortenController( req, res ) {
     }
 
     logger.info(
-      `Frage von Client-Sitzung ${sitzungID} erhalten: "${frageTrimmed}"`
+        `Frage von Client-Sitzung ${sitzungID} erhalten: "${frageTrimmed}"`
     );
 
 
