@@ -6,8 +6,8 @@ import createLogger from "logging";
  */
 export function registriereMiddlewareFunktionen( expressObjekt ) {
 
-  expressObjekt.use( corsMiddleware       );
-  expressObjekt.use( sitzungsIdMiddleware );
+  expressObjekt.use( corsMiddleware         );
+  expressObjekt.use( rateLimitingMiddleware );
 }
 
 
@@ -52,7 +52,7 @@ const MINDESTABSTAND_MS = 30*1000; // Mindestabstand zwischen zwei Requests von 
  * @param {*} next Funktion um Request weiterzugeben, wenn die Sitzung-ID erfolgreich
  *                 extrahiert wurde
  */
-function sitzungsIdMiddleware( req, res, next ) {
+function rateLimitingMiddleware( req, res, next ) {
 
   const body = req.body || {};
   const sitzungID = body.sitzungID || body.sitzungId || "";
@@ -63,10 +63,41 @@ function sitzungsIdMiddleware( req, res, next ) {
     });
   }
 
-  req.sitzungID = sitzungID.trim();
-
 
   const jetzt = Date.now();
+
+  if ( !letzterRequestMap.has( sitzungID ) ) {
+
+    logger.info( `Erste Anfrage für Sitzung ${sitzungID} erhalten.` );
+    letzterRequestMap.set( sitzungID, jetzt );
+    logger.info( `Anzahl Sitzungen in Datenbank: ${letzterRequestMap.size}` );
+    return next();
+
+  } else {
+
+    const zeitstempelLetzterRequest = letzterRequestMap.get( sitzungID );
+    const zeitSeitLetztemRequest    = jetzt - zeitstempelLetzterRequest;
+
+    if ( zeitSeitLetztemRequest < MINDESTABSTAND_MS ) {
+
+      logger.warn(
+        `Anfrage für Sitzung ${sitzungID} abgelehnt weil Zeit seit letztem Request nur ${zeitSeitLetztemRequest}ms.` );
+
+      return res.status( 429 ).json( {
+        error: "Too Many Requests: Bitte warten."
+      });
+
+    } else {
+
+      logger.info(
+        `Anfrage für Sitzung ${sitzungID} akzeptiert. Zeit seit letztem Request: ${zeitSeitLetztemRequest} ms.` );
+
+      letzterRequestMap.set( sitzungID, jetzt );
+      return next();
+    }
+  }
+
+
   const letzterRequestZeitstempel = letzterRequestMap.get( sitzungID ) || 0;
 
   if ( jetzt - letzterRequestZeitstempel < MINDESTABSTAND_MS ) {
@@ -76,9 +107,10 @@ function sitzungsIdMiddleware( req, res, next ) {
     return res.status( 429 ).json( {
       error: "Too Many Requests: Bitte warten."
     });
+
+  } else {
+
+      letzterRequestMap.set( sitzungID, jetzt );
+      return next();
   }
-
-  letzterRequestMap.set( sitzungID, jetzt );
-
-  return next();
 }
