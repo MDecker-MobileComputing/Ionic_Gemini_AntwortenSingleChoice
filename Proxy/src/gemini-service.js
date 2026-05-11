@@ -79,7 +79,7 @@ export async function erzeugeAntwortenoptionenMitGemini( frage ) {
 
     // JSON-String aus Gemini-Antwort extrahieren (falls Gemini zusätzlichen Text zurückliefert)
     const jsonStringMatch = antwortTextRoh.match( /{[\s\S]*}/ );
-    const jsonString = jsonStringMatch ? jsonStringMatch[0] : null;
+    const jsonString      = jsonStringMatch ? jsonStringMatch[0] : null;
 
     if ( !jsonString ) {
 
@@ -92,6 +92,9 @@ export async function erzeugeAntwortenoptionenMitGemini( frage ) {
     antwortObjekt.richtigeAntwort       = antwortObjekt.richtigeAntwort.trim();
     antwortObjekt.falscheAntwortenArray = antwortObjekt.falscheAntworten
                                                        .map( (antwort) => antwort.trim() );
+
+    const totalTokenCount = antwortGemini.usageMetadata?.totalTokenCount;
+    logger.info( `Tokenverbrauch für Antwort: ${totalTokenCount} Tokens.` );
 
     return [ antwortObjekt.richtigeAntwort, ...antwortObjekt.falscheAntwortenArray ];
 }
