@@ -4,8 +4,14 @@ import { writeFile } from "fs/promises";
 
 const logger = createLogger( "gemini-service" );
 
+/** Wert im Bereich von 0.0 bis 2.0, höher = kreativer, niedriger = fokussierter. */
+const TEMPERATUR = 0.7;
+
+/** Zentrales API-Objekt für den Zugriff auf die Gemini-API. */
 let geminiApiObjekt = null;
-let geminiModell    = "";
+
+/** KI-Modell, z.B. "gemini-3.1-flash-lite"; kann über Umgebungsvariablen konfiguriert werden. */
+let geminiModell = "";
 
 
 /**
@@ -20,7 +26,8 @@ export function initialisiereGeminiApi( geminiApiKey, geminiModellName ) {
     geminiApiObjekt = new GoogleGenAI({apiKey: geminiApiKey});
     geminiModell    = geminiModellName;
 
-    logger.info( "Gemini-API initialisiert mit Modell:", geminiModell );
+    logger.info(
+        `Gemini-API initialisiert mit Modell "${geminiModell}" und Temperatur=${TEMPERATUR}.` );
 }
 
 
@@ -56,9 +63,12 @@ export async function erzeugeAntwortenoptionenMitGemini( frage ) {
           Frage: ${frageTrimmed}`;
 
     const geminiAnfrageObjekt = {
-      model   : geminiModell,
-      contents: prompt
-    };
+                                    model   : geminiModell,
+                                    contents: prompt,
+                                    config  : {
+                                      temperature: TEMPERATUR
+                                    }
+                                };
 
     const antwortGemini =
               await geminiApiObjekt.models.generateContent( geminiAnfrageObjekt );

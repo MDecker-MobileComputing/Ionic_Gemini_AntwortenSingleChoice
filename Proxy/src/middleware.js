@@ -1,5 +1,7 @@
 import createLogger from "logging";
 
+const MINDESTABSTAND_MS = 30*1000; // Mindestabstand zwischen zwei Requests von derselben Sitzung in Millisekunden
+
 
 /**
  * Middleware-Funktionen für den Express-Server registrieren.
@@ -8,6 +10,9 @@ export function registriereMiddlewareFunktionen( expressObjekt ) {
 
   expressObjekt.use( corsMiddleware         );
   expressObjekt.use( rateLimitingMiddleware );
+
+  logger.info(
+    `Mindestabstand zwischen zwei Requests von derselben Sitzung: ${MINDESTABSTAND_MS} ms.` );
 }
 
 
@@ -36,8 +41,6 @@ function corsMiddleware( req, res, next ) {
 const logger = createLogger( "rate-limiter" );
 
 const letzterRequestMap = new Map(); // Map bildet Sitzungs-ID auf Zeitstempel des letzten Requests ab
-
-const MINDESTABSTAND_MS = 30*1000; // Mindestabstand zwischen zwei Requests von derselben Sitzung in Millisekunden
 
 
 /**
@@ -81,7 +84,7 @@ function rateLimitingMiddleware( req, res, next ) {
     if ( zeitSeitLetztemRequest < MINDESTABSTAND_MS ) {
 
       logger.warn(
-        `Anfrage für Sitzung ${sitzungID} abgelehnt weil Zeit seit letztem Request nur ${zeitSeitLetztemRequest}ms.` );
+        `Anfrage für Sitzung ${sitzungID} abgelehnt weil Zeit seit letztem Request nur ${zeitSeitLetztemRequest} ms.` );
 
       return res.status( 429 ).json( {
         error: "Too Many Requests: Bitte warten."
