@@ -21,6 +21,8 @@ const expressObjekt = express();
 expressObjekt.use( corsMiddleware );
 expressObjekt.use( express.json() );
 
+expressObjekt.use( express.static( "public_html" ) );
+
 
 expressObjekt.post( "/erzeugeAntworten", erzeugeAntwortenController );
 

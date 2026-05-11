@@ -9,6 +9,12 @@ import { Antworten } from './antworten';
 
 /**
  * Diese Klasse enthält die Kommunikation mit dem Proxy-Server, der die KI-API aufruft.
+ *
+ * Damit die im Emulator laufende App über unverschlüsseltes HTTP auf den Proxy zugreifen
+ * kann, muss in der AndroidManifest.xml der App das Attribut `android:usesCleartextTraffic="true"`
+ * im `<application>`-Tag gesetzt werden.
+ * Um nur  für die IP-Adresse des Host-Computers (`10.0.2.2`) HTTP ohne Verschlüsselung zur erlauben,
+ * siehe hier: https://gist.github.com/MDecker-MobileComputing/211fe7a1ca99e062fa2d1b800a9b8a31
  */
 @Injectable({
   providedIn: 'root',
@@ -33,11 +39,11 @@ export class GeminiService {
 
 
   /**
-   * Konstruktor für *Dependency Injection*
+   * Konstruktor für *Dependency Injection*.
    */
   constructor( private httpClient: HttpClient ) {
 
-      const appLaeuftAufAndroid = Capacitor.isNativePlatform();
+      const appLaeuftAufAndroid = Capacitor.getPlatform() === "android";
 
       let hostname = "localhost";
       if ( appLaeuftAufAndroid ) {
@@ -61,7 +67,7 @@ export class GeminiService {
    * @param singleChoiceFrage Vom Nutzer eingegebene Single-Choice-Frage
    *
    * @returns Antwortenobjekt mit einer richtigen Antwort und mehreren
-   *           falschen Antwortoptionen.
+   *          falschen Antwortoptionen.
    */
   public async erzeugeAntworten( singleChoiceFrage: string ): Promise<Antworten> {
 

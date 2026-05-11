@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Proxy für Gemini-Zugriff zur Erzeugung von Antwortoptionen</title>
+    <meta charset="utf-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="antwortoptionen-proxy.css">
+</head>
+<body>
+
+  <h1>Proxy für Gemini-Zugriff zur Erzeugung von Antwortoptionen</h1>
+  <p>
+    Dieser Proxy-Server empfängt Anfragen von der Ionic-App, leitet sie an die Gemini-API
+    weiter und sendet die Antworten zurück an die App.
+    Dadurch muss der API-Key für den Gemini-Zugriff nicht in die Ionic-App eingebaut werden,
+    wo er leicht von Dritten ausgelesen werden könnte. Außerdem können wir im
+    Proxy-Server einfach <i>Rate Limiting</i> implementieren und bei Bedarf das verwendete
+    Gemini-Modell oder den Prompt anpassen, ohne eine geänderte Ionic-App an alle Nutzer
+    verteilen zu müssen.
+  </p>
+</body>
