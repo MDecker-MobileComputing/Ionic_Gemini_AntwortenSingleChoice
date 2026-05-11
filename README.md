@@ -3,8 +3,8 @@
 <br>
 
 Diese Repository enthält ein [Ionic](https://ionicframework.com/)/Angular-Projekt für eine mobile App,
-die demonstrieren soll, wie man die KI [Google Gemini](https://ai.google.dev/) über eine Proxy-Server 
-verwendet, um sich (richtige und falsche) Antwortoptionen für eine vom Nutzer eingegebene Frage
+die demonstrieren soll, wie man die KI [Google Gemini](https://ai.google.dev/) über einen Proxy-Server
+anspricht, um sich richtige und falsche Antwortoptionen für eine vom Nutzer eingegebene Single-Choice-Frage
 erzeugen zu lassen.
 
 <br>
