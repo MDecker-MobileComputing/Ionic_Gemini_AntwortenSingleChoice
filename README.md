@@ -10,7 +10,7 @@ erzeugen zu lassen.
 <br>
 
 Zu Überwachung Quota/Rate Limit in *Google AI Studio* siehe auch
-[hier](https://github.com/MDecker-MobileComputing/Nodejs_GeminiTest#usage-%C3%BCberwachen)
+[hier](https://github.com/MDecker-MobileComputing/Nodejs_GeminiTest#usage-%C3%BCberwachen).
 
 <br>
 
