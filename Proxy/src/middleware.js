@@ -99,21 +99,4 @@ function rateLimitingMiddleware( req, res, next ) {
       return next();
     }
   }
-
-
-  const letzterRequestZeitstempel = letzterRequestMap.get( sitzungID ) || 0;
-
-  if ( jetzt - letzterRequestZeitstempel < MINDESTABSTAND_MS ) {
-
-    logger.warn( `Anfrage für Sitzung ${sitzungID} abgelehnt.` );
-
-    return res.status( 429 ).json( {
-      error: "Too Many Requests: Bitte warten."
-    });
-
-  } else {
-
-      letzterRequestMap.set( sitzungID, jetzt );
-      return next();
-  }
 }
