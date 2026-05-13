@@ -112,6 +112,12 @@ export class HomePage {
     await alert.present();
   }
 
+
+  /**
+   * Hilfsfunktion, um eine Fehlermeldung in einem Alert (Dialog) anzuzeigen.
+   *
+   * @param fehlermeldung Anzuzeigende Fehlermeldung
+   */
   private async zeigeFehlermeldung( fehlermeldung: string ) {
 
     const alert = await this.alertController.create({
