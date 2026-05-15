@@ -9,10 +9,39 @@ const MINDESTABSTAND_MS = 30*1000; // Mindestabstand zwischen zwei Requests von 
 export function registriereMiddlewareFunktionen( expressObjekt ) {
 
   expressObjekt.use( corsMiddleware         );
+  expressObjekt.use( nurPostMiddleware      );
   expressObjekt.use( rateLimitingMiddleware );
 
   logger.info(
     `Mindestabstand zwischen zwei Requests von derselben Sitzung: ${MINDESTABSTAND_MS} ms.` );
+}
+
+
+/**
+ * Middleware-Funktion zur Begrenzung auf POST-Requests.
+ * OPTIONS bleibt für CORS-Preflight erlaubt.
+ * Requests mit Abruf favicon werden blockiert, damit keine verwirrenden Warnungen
+ * von Rate Limiting Middleware im Log auftauchen, wenn jemand die URL im Browser
+ * aufruft.
+ */
+function nurPostMiddleware( req, res, next ) {
+
+  if ( req.method === "OPTIONS" ) {
+
+    return next();
+  }
+
+  if ( req.method !== "POST" ) {
+
+    logger.warn(
+      `Anfrage mit ungültigem HTTP-Verb ${req.method} abgelehnt: ${req.path}` );
+
+    return res.status( 405 ).json( {
+      error: "Method Not Allowed: Nur POST ist erlaubt."
+    });
+  }
+
+  return next();
 }
 
 
