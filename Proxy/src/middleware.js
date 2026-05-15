@@ -37,7 +37,6 @@ function corsMiddleware( req, res, next ) {
 }
 
 
-
 const logger = createLogger( "rate-limiter" );
 
 const letzterRequestMap = new Map(); // Map bildet Sitzungs-ID auf Zeitstempel des letzten Requests ab
@@ -61,11 +60,11 @@ function rateLimitingMiddleware( req, res, next ) {
   const sitzungID = body.sitzungID || body.sitzungId || "";
   if ( sitzungID.trim().length === 0 ) {
 
+    logger.warn( `Anfrage für Pfad ${req.path} abgelehnt weil keine Sitzung-ID enthalten.` );
     return res.status( 400 ).json( {
       error: "Bad Request: Keine Sitzung-ID enthalten."
     });
   }
-
 
   const jetzt = Date.now();
 

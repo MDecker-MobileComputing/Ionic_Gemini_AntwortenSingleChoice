@@ -57,6 +57,11 @@ export class HomePage {
       return;
     }
 
+    this.antwortoption1 = "";
+    this.antwortoption2 = "";
+    this.antwortoption3 = "";
+    this.antwortoption4 = "";
+
     try {
 
       const antworten =
