@@ -66,7 +66,7 @@ export async function erzeugeAntwortenController( req, res ) {
       logger.error( `Gemini-Fehler für Sitzung ${sitzungID}:`, fehler );
 
       return res.status( 500 ).json( {
-        error: "Interner Serverfehler bei der Antwortgenerierung."
+        error: "Interner Server-Fehler bei der Antwortgenerierung."
       });
     }
 }
