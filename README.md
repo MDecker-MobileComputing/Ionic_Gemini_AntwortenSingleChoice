@@ -14,6 +14,10 @@ Zu Überwachung Quota/Rate Limit in *Google AI Studio* siehe auch
 
 <br>
 
+![Screenshot](screenshot_1.png)
+
+<br>
+
 ----
 
 ## License ##
