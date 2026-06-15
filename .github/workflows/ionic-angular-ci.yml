@@ -3,10 +3,15 @@ name: Ionic Angular CI
 on:
   push:
     branches: [ master ]
+  workflow_dispatch:
+
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: IonicApp # Arbeitsverzeichnis setzen!
 
     steps:
     - name: Code auschecken
@@ -21,13 +26,13 @@ jobs:
       uses: actions/cache@v5 # neueste Version siehe https://github.com/actions/cache/releases
       with:
         path: ~/.npm
-        key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.OS }}-node-${{ hashFiles('IonicApp/package-lock.json') }}
         restore-keys: |
           ${{ runner.OS }}-node-
           ${{ runner.OS }}-
 
-    - name: Abhängigkeiten installieren
-      run: npm clean-install # node_modules/ ggf. löschen
+    - name: Abhaengigkeiten installieren
+      run: npm clean-install # node_modules/ ggf. loeschen
 
     - name: Ionic-App bauen
       run: |
