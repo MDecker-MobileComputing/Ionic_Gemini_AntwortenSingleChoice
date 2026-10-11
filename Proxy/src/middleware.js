@@ -2,6 +2,10 @@ import createLogger from "logging";
 
 const MINDESTABSTAND_MS = 30*1000; // Mindestabstand zwischen zwei Requests von derselben Sitzung in Millisekunden
 
+const logger = createLogger( "rate-limiter" );
+
+const letzterRequestMap = new Map(); // Map bildet Sitzungs-ID auf Zeitstempel des letzten Requests ab
+
 
 /**
  * Middleware-Funktionen für den Express-Server registrieren.
@@ -64,11 +68,6 @@ function corsMiddleware( req, res, next ) {
 
   return next();
 }
-
-
-const logger = createLogger( "rate-limiter" );
-
-const letzterRequestMap = new Map(); // Map bildet Sitzungs-ID auf Zeitstempel des letzten Requests ab
 
 
 /**

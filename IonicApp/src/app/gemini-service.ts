@@ -21,7 +21,7 @@ import { Antworten } from './antworten';
 export class GeminiService {
 
   /**
-    * Kurze Sitzungs-ID mit genau 10 Hex-Zeichen für Rate-Limits.
+    * Kurze Sitzungs-ID mit genau 10 Hex-Zeichen (z.B. `5da7ca7321`) für Rate-Limits.
     * Sie wird bei jedem Start der App neu generiert, sollte besser persistiert
     * oder von einem API-Gateway nach Authentifizierung zugewiesen werden.
     *
@@ -29,7 +29,7 @@ export class GeminiService {
     */
   static readonly SITZUNG_ID = Math.floor( Math.random() * 0x10000000000 )
                                    .toString( 16 )
-                                   .padStart( 10, '0' );
+                                   .padStart( 10, "0" );
 
   /**
    * URL für Zugriff auf den Proxy-Server`; Hostname abhängig von Betrieb der
