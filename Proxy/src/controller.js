@@ -70,3 +70,43 @@ export async function erzeugeAntwortenController( req, res ) {
       });
     }
 }
+
+
+/**
+ * Event-Handler für die englische Route "/generateAnswers"; kapselt
+ * {@link erzeugeAntwortenController} und übersetzt Request und Response.
+ *
+ * @param {*} req Body muss "question" (string) und "sessionId" oder "sessionID" (string) enthalten.
+ *
+ * @param {*} res Antwort-Objekt mit "correctAnswer" (string) und
+ *                "wrongAnswers" (string[]); Fehler als `{ error }`.
+ */
+export async function generateAnswersController( req, res ) {
+
+    const body = req.body || {};
+
+    const innerReq = {
+      body: {
+        frage    : body.question,
+        sitzungID:         body.sessionId || body.sessionID
+      }
+    };
+
+    const innerRes = {
+      status( code ) {
+        res.status( code );
+        return innerRes;
+      },
+      json( ergebnis ) {
+        if ( ergebnis && ergebnis.richtigeAntwort !== undefined ) {
+          return res.json( {
+            correctAnswer: ergebnis.richtigeAntwort,
+            wrongAnswers : ergebnis.falscheAntworten
+          } );
+        }
+        return res.json( ergebnis );
+      }
+    };
+
+    return erzeugeAntwortenController( innerReq, innerRes );
+}

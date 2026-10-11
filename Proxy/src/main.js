@@ -2,7 +2,7 @@ import express      from "express";
 import createLogger from "logging";
 
 import { registriereMiddlewareFunktionen } from "./middleware.js";
-import { erzeugeAntwortenController      } from "./controller.js";
+import { erzeugeAntwortenController, generateAnswersController } from "./controller.js";
 import { initialisiereGeminiApi          } from "./gemini-service.js";
 
 
@@ -29,8 +29,9 @@ expressObjekt.use( express.static( "public_html" ) );
 registriereMiddlewareFunktionen( expressObjekt );
 
 
-
 expressObjekt.post( "/erzeugeAntworten", erzeugeAntwortenController );
+expressObjekt.post( "/generateAnswers" , generateAnswersController  );
+
 
 const PORTNUMMER = process.env.PORT || 8080;
 

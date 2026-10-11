@@ -87,7 +87,8 @@ function corsMiddleware( req, res, next ) {
 function rateLimitingMiddleware( req, res, next ) {
 
   const body = req.body || {};
-  const sitzungID = body.sitzungID || body.sitzungId || "";
+  const sitzungID = body.sitzungID || body.sitzungId ||
+                    body.sessionId || body.sessionID || "";
   if ( sitzungID.trim().length === 0 ) {
 
     logger.warn( `Anfrage für Pfad ${req.path} abgelehnt weil keine Sitzung-ID enthalten.` );
