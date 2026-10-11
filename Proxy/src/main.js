@@ -2,8 +2,8 @@ import express      from "express";
 import createLogger from "logging";
 
 import { registriereMiddlewareFunktionen } from "./middleware.js";
-import { erzeugeAntwortenController } from "./controller.js";
-import { initialisiereGeminiApi } from "./gemini-service.js";
+import { erzeugeAntwortenController      } from "./controller.js";
+import { initialisiereGeminiApi          } from "./gemini-service.js";
 
 
 const logger = createLogger( "gemini-proxy" );

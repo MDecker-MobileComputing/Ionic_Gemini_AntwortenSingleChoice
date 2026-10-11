@@ -1,6 +1,5 @@
 import createLogger from "logging";
 import { GoogleGenAI } from "@google/genai";
-import { writeFile } from "fs/promises";
 
 const logger = createLogger( "gemini-service" );
 

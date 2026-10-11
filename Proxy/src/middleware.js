@@ -1,10 +1,12 @@
 import createLogger from "logging";
 
-const MINDESTABSTAND_MS = 30*1000; // Mindestabstand zwischen zwei Requests von derselben Sitzung in Millisekunden
+/* Mindestabstand zwischen zwei Requests von derselben Sitzung in Millisekunden */
+const MINDESTABSTAND_MS = 30*1000; 
 
 const logger = createLogger( "rate-limiter" );
 
-const letzterRequestMap = new Map(); // Map bildet Sitzungs-ID auf Zeitstempel des letzten Requests ab
+/* Map bildet Sitzungs-ID auf Zeitstempel des letzten Requests ab */
+const letzterRequestMap = new Map(); 
 
 
 /**
