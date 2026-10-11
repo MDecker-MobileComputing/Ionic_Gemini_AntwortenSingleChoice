@@ -65,7 +65,7 @@
               },
               "bodyType": "Text",
               "textBodyEditorHeight": 150,
-              "textBody": "{\n  \"frage\"    : \"Welches ist das bevölkerungsreichste Land der Welt?\", \n  \"sitzungID\": \"5da7ca7321\"\n}"
+              "textBody": "{\n  \"question\" : \"Which is the most populous country in the world?\", \n  \"sessionID\": \"8f2b6e41ac\"\n}"
             },
             "uri": {
               "query": {
@@ -77,7 +77,7 @@
                 "version": "V11"
               },
               "host": "localhost:8080",
-              "path": "/erzeugeAntworten"
+              "path": "/generateAnswers"
             },
             "id": "c8f8a97c-2ad1-4a41-9275-9f6a84a2b397",
             "name": "Frage (en): Most populous country",
